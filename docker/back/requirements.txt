@@ -1,0 +1,7 @@
+Django~=2.2
+pytz==2019.3
+sqlparse==0.3.0
+psycopg2
+uWSGI == 2.0.18
+pytest
+pytest-mock

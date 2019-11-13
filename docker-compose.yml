@@ -1,0 +1,36 @@
+version: "3.2"
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB?}
+      POSTGRES_USER: ${POSTGRES_USER?}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?}
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - "./docker/nginx/project.conf:/etc/nginx/conf.d/default.conf"
+      - "static:/static/"
+    ports:
+      - 80:80
+    depends_on:
+      - back
+
+  back:
+    build:
+      context: .
+      dockerfile: docker/back/Dockerfile
+      args:
+        DB_NAME: ${POSTGRES_DB?}
+        DB_USER: ${POSTGRES_USER?}
+        DB_PASSWORD: ${POSTGRES_PASSWORD?}
+    volumes:
+      - "./src/:/usr/src/app/"
+      - "static:/static/"
+    depends_on:
+      - db
+
+volumes:
+  static:
