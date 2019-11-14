@@ -40,7 +40,14 @@ class ProductReader:
                 products_to_delete.values_list('id', flat=True)
             )
 
-    def update_products(self):
+    def _update_products(self):
+        """
+            Deprecated.
+
+            First naive approach which came to my mind.
+            just leave it there.
+        """
+
         try:
             csv_file = self._get_csv()
         except HTTPError:
@@ -72,4 +79,40 @@ class ProductReader:
                 product.__dict__.update(product_kwargs)
                 product.save()
 
-        self._remove_deleted_products(current_skus)
+    def update_products(self):
+        try:
+            csv_file = self._get_csv()
+        except HTTPError:
+            logger.exception(
+                'Http error occurred during getting file. Check that file exists and that file url is correct'
+            )
+            return
+
+        products = {}
+        for row in csv_file:
+            sku = row.get('sku (unique id)')
+            product_kwargs = {
+                'name': row.get('product_name'),
+                'barcode': row.get('barcode'),
+                'photo_url': row.get('photo_url'),
+                'price': row.get('price_cents') or None,
+                'producer': row.get('producer'),
+                'is_deleted': False,
+            }
+            products[sku] = product_kwargs
+
+        existing_products_skus = list(map(
+            str, Product.objects.filter(sku__in=list(products.keys())).values_list('sku', flat=True)
+        ))
+        for sku in existing_products_skus:
+            Product.objects.filter(sku=sku).update(**products.get(sku))
+
+        new_products_skus = set(products.keys()) - set(existing_products_skus)
+        Product.objects.bulk_create(
+            [Product(**products.get(sku), sku=sku) for sku in new_products_skus]
+        )
+
+        deleted_products_skus = set(map(
+            str, Product.objects.values_list('sku', flat=True)
+        )) - set(products.keys())
+        Product.objects.filter(sku__in=deleted_products_skus).update(is_deleted=True)
