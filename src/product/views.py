@@ -9,6 +9,12 @@ class ProductListView(ListAPIView):
 
     renderer_classes = (JSONRenderer,)
 
-    queryset = Product.objects.filter(is_deleted=False)
+    queryset = Product.objects.active()
     serializer_class = ProductSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        producer = self.request.query_params.get('producer')
+        if producer:
+            qs = qs.filter(producer=producer)
+        return qs
