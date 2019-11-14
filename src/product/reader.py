@@ -33,11 +33,12 @@ class ProductReader:
 
     def _remove_deleted_products(self, current_skus):
         products_to_delete = Product.objects.exclude(sku__in=current_skus)
-        products_to_delete.update(is_deleted=True)
-        logger.info(
-            'Next products were deleted from the file %s. Mark them as is_deleted',
-            products_to_delete.values_list('id', flat=True)
-        )
+        if products_to_delete:
+            products_to_delete.update(is_deleted=True)
+            logger.info(
+                'Next products were deleted from the file %s. Mark them as is_deleted',
+                products_to_delete.values_list('id', flat=True)
+            )
 
     def update_products(self):
         try:

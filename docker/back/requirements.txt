@@ -5,6 +5,8 @@ pytz==2019.3
 sqlparse==0.3.0
 psycopg2==2.8.4
 uWSGI == 2.0.18
+celery
+redis
 
 pytest==5.2.2
 pytest-mock==1.11.2
