@@ -8,3 +8,4 @@ uWSGI == 2.0.18
 
 pytest==5.2.2
 pytest-mock==1.11.2
+pytest-django

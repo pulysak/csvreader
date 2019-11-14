@@ -28,6 +28,7 @@ services:
         DB_PASSWORD: ${POSTGRES_PASSWORD?}
     volumes:
       - "./src/:/usr/src/app/"
+      - "./pytest.ini:/usr/src/pytest.ini"
       - "static:/static/"
     depends_on:
       - db
