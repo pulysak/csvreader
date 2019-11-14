@@ -41,6 +41,7 @@ def csv_text_version1():
 def csv_file_verison1(csv_text_version1):
     return StringIO(csv_text_version1)
 
+
 @fixture
 def csv_text_version2():
     """
