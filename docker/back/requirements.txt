@@ -1,5 +1,6 @@
 Django~=2.2
 djangorestframework==3.10.3
+requests==2.22.0
 pytz==2019.3
 sqlparse==0.3.0
 psycopg2==2.8.4
