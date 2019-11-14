@@ -48,4 +48,4 @@ def update_products():
             product.__dict__.update(product_kwargs)
             product.save()
 
-        Product.objects.exclude(sku__in=current_skus).update(is_deleted=True)
+    Product.objects.exclude(sku__in=current_skus).update(is_deleted=True)
